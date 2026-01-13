@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marble Jar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6fb;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 1.8em;
+      margin-bottom: 20px;
+    }
+
+    .jar-container {
+      width: 80%;
+      max-width: 250px;
+      height: 300px;
+      border: 5px solid #555;
+      border-radius: 0 0 30px 30px;
+      margin: 20px auto;
+      position: relative;
+      background: white;
+      overflow: hidden;
+    }
+
+    .marbles {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 6px;
+      box-sizing: border-box;
+    }
+
+    .marble {
+      width: 14px;
+      height: 14px;
+      background: radial-gradient(circle at 30% 30%, #7ecbff, #1e90ff);
+      border-radius: 50%;
+      margin: 2px;
+    }
+
+    button {
+      padding: 12px 20px;
+      margin: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 6px;
+      border: none;
+      background-color: #1e90ff;
+      color: white;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background-color: #0f63c0;
+    }
+
+    input {
+      padding: 8px;
+      font-size: 16px;
+      width: 100px;
+      max-width: 80%;
+      text-align: center;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+    }
+
+    @media (max-width: 400px) {
+      .marble {
+        width: 12px;
+        height: 12px;
+        margin: 1px;
+      }
+      .jar-container {
+        height: 250px;
+      }
+      button {
+        padding: 10px 16px;
+        font-size: 14px;
+      }
+      input {
+        font-size: 14px;
+        width: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🫙 Marble Jar</h1>
+
+  <div class="jar-container">
+    <div class="marbles" id="marbles"></div>
+  </div>
+
+  <p><strong>Marbles:</strong> <span id="marbleCount">0</span></p>
+  <p><strong>Goal:</strong> <span id="goalCount">0</span></p>
+  <p id="progress"></p>
+
+  <button onclick="addMarble()">➕ Add Marble</button>
+  <button onclick="removeMarble()">➖ Remove Marble</button>
+
+  <br><br>
+
+  <input type="number" id="goalInput" placeholder="Goal">
+  <button onclick="setGoal()">🎯 Set Goal</button>
+
+  <script>
+    let marbles = Number(localStorage.getItem("marbles")) || 0;
+    let goal = Number(localStorage.getItem("goal")) || 0;
+
+    const marbleContainer = document.getElementById("marbles");
+
+    function updateDisplay() {
+      document.getElementById("marbleCount").textContent = marbles;
+      document.getElementById("goalCount").textContent = goal;
+
+      if (goal > 0) {
+        document.getElementById("progress").textContent =
+          `Progress: ${Math.min(marbles, goal)} / ${goal}`;
+      } else {
+        document.getElementById("progress").textContent = "";
+      }
+
+      drawMarbles();
+    }
+
+    function drawMarbles() {
+      marbleContainer.innerHTML = "";
+
+      let maxVisible = goal > 0 ? goal : marbles;
+      let visibleMarbles = Math.min(marbles, maxVisible);
+
+      for (let i = 0; i < visibleMarbles; i++) {
+        const marble = document.createElement("div");
+        marble.className = "marble";
+        marbleContainer.appendChild(marble);
+      }
+    }
+
+    function addMarble() {
+      marbles++;
+      localStorage.setItem("marbles", marbles);
+      updateDisplay();
+    }
+
+    function removeMarble() {
+      if (marbles > 0) {
+        marbles--;
+        localStorage.setItem("marbles", marbles);
+        updateDisplay();
+      }
+    }
+
+    function setGoal() {
+      goal = Number(document.getElementById("goalInput").value);
+      localStorage.setItem("goal", goal);
+      updateDisplay();
+    }
+
+    updateDisplay();
+  </script>
+
+</body>
+</html>
